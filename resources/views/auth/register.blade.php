@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="form-group">
-                    {!! Form::label('password', 'password') !!}
+                    {!! Form::label('password', 'Password') !!}
                     {!! Form::password('password', ['class' => 'form-control']) !!}
                 </div>
 
@@ -28,7 +28,7 @@
                     {!! Form::label('password_confirmation', 'Confirmation') !!}
                     {!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
                 </div>
-                {!! Form::submit('Sign up', ['class' => 'btn btn-primary btn-block'] !!}
+                {!! Form::submit('Sign up', ['class' => 'btn btn-primary btn-block']) !!}
 
             {!! Form::close() !!}
         </div>
