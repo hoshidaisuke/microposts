@@ -36,4 +36,79 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * このユーザが所有する投稿
+     */
+    public function microposts()
+    {
+        return $this->hasMany(Micropost::class);
+    }
+
+    public function loadRelationshipCounts()
+    {
+        $this->loadCount(['microposts', 'followings', 'followers']);
+    }
+    
+    /**
+     * このユーザがフォロー中のユーザ 
+     */
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'user_follow', 'user_id', 'follow_id')->withTimestamps();
+    }
+    
+    /**
+     * このユーザをフォロー中のユーザ
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'user_follow', 'follow_id', 'user_id')->withTimestamps();
+    }
+    
+    /**
+     * $userIdで指定されたユーザをフォローする
+     */
+    public function follow($userId)
+    {
+        // すでにフォローしているかの確認
+        $exist = $this->is_following($userId);
+        // 相手が自分自身かどうかの確認
+        $its_me = $this->id == $userId;
+        
+        if ($exist || $its_me) {
+            // すでにフォローしていれば何もしない
+            return false;
+        } else {
+            // 未フォローであればフォローする
+            $this->followings()->attach($userId);
+            return true;
+        }
+    }
+    
+    /**
+     * $userIdで指定されたユーザをアンフォローする
+     */
+    public function unfollow($userId)
+    {
+        $exist = $this->is_following($userId);
+        $its_me = $this->id == $userId;
+        
+        if ($exist && !$its_me) {
+            $this->followings()->detach($userId);
+            return true;
+        } else {
+            // 未フォロー
+            return false;
+        }
+    }
+    
+    /**
+     * 指定された$userIdのユーザをこのユーザがフォロー中であるか調べる。
+     * フォロー中ならtrueを返す
+     */
+    public function is_following($userId)
+    {
+        return $this->followings()->where('follow_id', $userId)->exists();
+    } 
 }
