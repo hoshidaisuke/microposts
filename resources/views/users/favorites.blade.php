@@ -7,10 +7,16 @@
             @include('users.card')
         </aside>
         <div class="col-sm-8">
-            {{-- タブ --}}
             @include('users.navtabs')
-            {{-- ユーザ一覧 --}}
-            @include('users.users')
+            @if (count($microposts) > 0)
+                <ul class="list-unstyled">
+                    @foreach ($microposts as $micropost)
+                        <li class="media">
+                            {{ $micropost->content }}
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
     </div>
 @endsection

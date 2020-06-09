@@ -79,13 +79,13 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
 
         // 関係するモデルの件数をロード
-        $micropost->loadRelationshipCounts();
         
-        $microposts = $user->favoritesMicroposts()->paginate(10);   
-
+        $microposts = $user->favorites()->paginate(10);   
+        $user->loadRelationshipCounts();
+        
         // 表示
         return view('users.favorites', [
-            'micropost' => $micropost,
+            'user' => $user,
             'microposts' => $microposts,
         ]);
     }
